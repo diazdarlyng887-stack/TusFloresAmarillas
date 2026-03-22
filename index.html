@@ -774,52 +774,10 @@
         }
       }
 
-      @media (max-width: 640px) {
-        body {
-          overflow-y: auto;
-        }
-        .scene {
-          min-height: 100vh;
-          padding-top: 5.5rem;
-          padding-bottom: 8rem;
-        }
-        .controls {
-          position: fixed;
-          left: 0.75rem;
-          right: 0.75rem;
-          top: 0.75rem;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 0.45rem;
-        }
-        .controls .chip {
-          flex: 1 1 150px;
-          text-align: center;
-          box-shadow:
-            0 10px 24px rgba(0, 0, 0, 0.05),
-            0 0 0.65rem rgba(255, 200, 60, 0.14),
-            0 1px 0 rgba(255, 255, 255, 0.3) inset;
-        }
-        .flower {
-          filter:
-            drop-shadow(0 14px 26px rgba(130, 75, 0, 0.16))
-            drop-shadow(0 0 10px rgba(255, 210, 64, 0.12));
-        }
-        .letter {
-          box-shadow:
-            0 25px 60px rgba(80, 45, 0, 0.12),
-            0 0 0 1px rgba(255, 220, 120, 0.12) inset,
-            0 1px 0 rgba(255, 255, 255, 0.28) inset;
-        }
-        .backgroundFlowerWrap {
-          opacity: 0.32;
-        }
-      }
-
       @media (max-width: 520px) {
         .controls {
-          left: 0.65rem;
-          right: 0.65rem;
+          left: 0.75rem;
+          top: 0.75rem;
         }
         .hint {
           transform: translate(-50%, calc(-50% + 9.1rem));
@@ -1003,13 +961,12 @@
         function seedBackgroundFlowers() {
           if (!backgroundGarden) return;
           backgroundGarden.innerHTML = "";
-          const isCompact = window.matchMedia("(max-width: 640px)").matches;
-          const amount = isCompact ? 8 : window.matchMedia("(max-width: 520px)").matches ? 12 : 20;
+          const amount = window.matchMedia("(max-width: 520px)").matches ? 16 : 24;
           for (let i = 0; i < amount; i++) {
             const flower = createBackgroundFlower({
               x: rand(2, 98),
               y: rand(4, 96),
-              size: rand(isCompact ? 38 : 50, isCompact ? 74 : 92),
+              size: rand(46, 88),
             });
             backgroundGarden.appendChild(flower);
           }
@@ -1121,18 +1078,15 @@
           if (!petalRain) return;
           stopPetalRain();
           petalRain.classList.add("is-active");
-          const isCompact = window.matchMedia("(max-width: 640px)").matches;
-          const initialBurst = isCompact ? 8 : 14;
-          for (let i = 0; i < initialBurst; i++) {
-            setTimeout(spawnPetal, i * (isCompact ? 220 : 160));
+          for (let i = 0; i < 14; i++) {
+            setTimeout(spawnPetal, i * 160);
           }
-          const cadence = isCompact ? 620 : 420;
           petalInterval = setInterval(() => {
             spawnPetal();
-          }, cadence);
+          }, 420);
           petalStopTimer = setTimeout(() => {
             stopPetalRain();
-          }, isCompact ? 14000 : 20000);
+          }, 20000);
         }
 
         function stopPetalRain() {

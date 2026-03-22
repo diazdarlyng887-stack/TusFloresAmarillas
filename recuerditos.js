@@ -42,13 +42,12 @@
   function seedBackground() {
     if (!bgGarden) return;
     bgGarden.innerHTML = "";
-    const isCompact = window.matchMedia("(max-width: 640px)").matches;
-    const amount = isCompact ? 8 : window.matchMedia("(max-width: 520px)").matches ? 12 : 20;
+    const amount = window.matchMedia("(max-width: 520px)").matches ? 14 : 22;
     for (let i = 0; i < amount; i++) {
       const flower = createBackgroundFlower({
         x: rand(2, 98),
         y: rand(4, 96),
-        size: rand(isCompact ? 40 : 50, isCompact ? 78 : 96),
+        size: rand(50, 96),
       });
       bgGarden.appendChild(flower);
     }
