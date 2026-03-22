@@ -88,8 +88,130 @@
         inset: 0;
       }
 
+      #backgroundGarden {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        opacity: 0.9;
+      }
+
+      .backgroundFlowerWrap {
+        position: absolute;
+        left: calc(var(--x) * 1vw);
+        top: calc(var(--y) * 1vh);
+        transform: translate3d(-50%, -50%, 0);
+        animation: bgFloat var(--floatDur, 26s) cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        opacity: 0.45;
+        filter: blur(0.2px);
+        will-change: transform, opacity;
+      }
+
+      .backgroundFlower {
+        width: var(--size, 64px);
+        height: var(--size, 64px);
+        position: relative;
+        display: grid;
+        place-items: center;
+        opacity: 0.8;
+        transform: rotate(var(--tilt, 0deg));
+      }
+
+      .backgroundFlower .head {
+        width: 100%;
+        height: 100%;
+        opacity: 0.85;
+        filter: saturate(0.92);
+      }
+
+      .backgroundFlower .petal {
+        filter: blur(0.25px);
+        opacity: 0.75;
+      }
+
+      .backgroundFlower .center {
+        filter: brightness(0.9);
+        opacity: 0.85;
+      }
+
+      .backgroundFlower .spark {
+        opacity: 0.35;
+      }
+
+      #petalRain {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 25;
+        opacity: 0;
+        transition: opacity 1200ms cubic-bezier(0.42, 0, 0.58, 1);
+      }
+
+      #petalRain.is-active {
+        opacity: 1;
+      }
+
+      .petalRain__petal {
+        position: absolute;
+        top: -12%;
+        width: var(--petalSize, 20px);
+        height: calc(var(--petalSize, 20px) * 1.35);
+        border-radius: 45% 55% 45% 55%;
+        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.72), transparent 60%),
+          linear-gradient(135deg, rgba(255, 225, 180, 0.85), rgba(255, 190, 220, 0.65));
+        box-shadow: 0 6px 20px rgba(255, 195, 210, 0.35);
+        filter: blur(0.2px);
+        opacity: 0.75;
+        transform: translate3d(0, 0, 0) rotate(var(--startTilt, -12deg));
+        animation: petalFall var(--petalDur, 10s) cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+      }
+
+      #pageTransition {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.65), transparent 55%),
+          radial-gradient(circle at 80% 30%, rgba(255, 220, 190, 0.7), transparent 55%),
+          rgba(255, 209, 150, 0.85);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 600ms ease;
+        z-index: 999;
+        overflow: hidden;
+      }
+
+      #pageTransition::before,
+      #pageTransition::after {
+        content: "";
+        position: absolute;
+        inset: -10%;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.8) 0 18%, transparent 22%) 5% 20%/120px 120px repeat,
+          radial-gradient(circle at 70% 20%, rgba(255, 238, 170, 0.85) 0 14%, transparent 18%) 60% 40%/140px 140px repeat,
+          radial-gradient(circle at 40% 70%, rgba(255, 220, 140, 0.8) 0 16%, transparent 20%) 20% 80%/110px 110px repeat;
+        opacity: 0.5;
+        animation: transitionPetals 4s linear infinite;
+      }
+
+      #pageTransition::after {
+        opacity: 0.35;
+        background:
+          radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7) 0 14%, transparent 18%) 15% 15%/100px 100px repeat,
+          radial-gradient(circle at 80% 70%, rgba(255, 220, 150, 0.8) 0 12%, transparent 16%) 70% 70%/150px 150px repeat;
+        animation-duration: 5.5s;
+      }
+
+      body.is-transitioning #pageTransition {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
       .hint {
         position: absolute;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         left: 50%;
         top: 50%;
         transform: translate(-50%, calc(-50% + 9.5rem));
@@ -104,13 +226,53 @@
         border: 1px solid rgba(255, 255, 255, 0.35);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        pointer-events: none;
+        pointer-events: auto;
+        cursor: pointer;
         opacity: 1;
-        transition: opacity 450ms ease;
+        z-index: 60;
+        transition:
+          opacity 520ms ease,
+          transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 520ms cubic-bezier(0.42, 0, 0.58, 1),
+          border-color 420ms cubic-bezier(0.42, 0, 0.58, 1),
+          background 420ms cubic-bezier(0.42, 0, 0.58, 1);
+        overflow: hidden;
+      }
+
+      .hint::after {
+        content: "";
+        position: absolute;
+        inset: -30% -60%;
+        background: linear-gradient(
+          120deg,
+          transparent 35%,
+          rgba(255, 220, 110, 0.42) 45%,
+          rgba(255, 255, 255, 0.35) 50%,
+          rgba(255, 220, 110, 0.42) 55%,
+          transparent 65%
+        );
+        transform: translateX(-65%) rotate(6deg);
+        opacity: 0.4;
+        pointer-events: none;
+        animation: chipShine 5.5s ease-in-out infinite;
       }
 
       body.is-revealing .hint {
         opacity: 0;
+        pointer-events: none;
+      }
+
+      .hint:hover {
+        transform: translate(-50%, calc(-50% + 8.85rem));
+        border-color: rgba(255, 255, 255, 0.68);
+        background: rgba(255, 255, 255, 0.32);
+        box-shadow:
+          0 18px 55px rgba(0, 0, 0, 0.07),
+          0 0 1.2rem rgba(255, 210, 90, 0.28);
+      }
+
+      .hint:active {
+        transform: translate(-50%, calc(-50% + 9.15rem));
       }
 
       .controls {
@@ -139,10 +301,19 @@
           0 0 0.85rem rgba(255, 200, 60, 0.18),
           0 1px 0 rgba(255, 255, 255, 0.35) inset;
         transition:
-          transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          background 180ms ease,
-          border-color 180ms ease,
-          box-shadow 220ms ease;
+          transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+          background 320ms cubic-bezier(0.42, 0, 0.58, 1),
+          border-color 320ms cubic-bezier(0.42, 0, 0.58, 1),
+          box-shadow 420ms cubic-bezier(0.42, 0, 0.58, 1),
+          filter 320ms cubic-bezier(0.42, 0, 0.58, 1);
+        text-decoration: none;
+      }
+
+      .chip--timer {
+        min-width: 9.5rem;
+        text-align: left;
+        letter-spacing: 0.15px;
+        font-weight: 650;
       }
 
       .chip::after {
@@ -183,8 +354,8 @@
         transform: translate3d(-50%, -50%, 0);
         will-change: transform, opacity;
         animation:
-          floaty var(--floatDur) cubic-bezier(0.4, 0.0, 0.2, 1) infinite,
-          appear 950ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          floaty var(--floatDur) cubic-bezier(0.42, 0, 0.58, 1) infinite,
+          appear 950ms cubic-bezier(0.33, 0, 0.67, 1) both;
         animation-delay: var(--delay), 0ms;
         z-index: 10;
       }
@@ -203,14 +374,37 @@
         background: transparent;
         padding: 0;
         cursor: pointer;
+        position: relative;
         filter:
           drop-shadow(0 20px 40px rgba(130, 75, 0, 0.18))
           drop-shadow(0 0 16px rgba(255, 210, 64, 0.18));
         transform-origin: center;
         will-change: transform, filter, opacity;
-        animation: sway var(--swayDur) cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+        animation: sway var(--swayDur) cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        transition: filter 420ms cubic-bezier(0.42, 0, 0.58, 1);
         outline: none;
         -webkit-tap-highlight-color: transparent;
+      }
+
+      .flower.is-reacting {
+        filter:
+          drop-shadow(0 28px 55px rgba(130, 75, 0, 0.26))
+          drop-shadow(0 0 1.25rem rgba(255, 236, 183, 0.8));
+      }
+
+      .flowerReaction {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 150%;
+        height: 150%;
+        transform: translate(-50%, -50%) scale(0.25);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 245, 210, 0.85), transparent 72%);
+        mix-blend-mode: screen;
+        pointer-events: none;
+        animation: reactionPulse 1.4s cubic-bezier(0.33, 0, 0.67, 1) forwards;
+        opacity: 0.8;
       }
 
       .flower:focus-visible {
@@ -412,33 +606,41 @@
       @keyframes floaty {
         0% {
           transform: translate3d(-50%, -50%, 0)
-            translate3d(calc(var(--driftX) * 0.18px), calc(var(--driftY) * 0.22px), 0);
+            translate3d(calc(var(--driftX) * 0.12px), calc(var(--driftY) * 0.14px), 0);
         }
-        28% {
+        25% {
           transform: translate3d(-50%, -50%, 0)
-            translate3d(calc(var(--driftX) * 0.62px), calc(var(--driftY) * 0.38px), 0);
+            translate3d(calc(var(--driftX) * 0.42px), calc(var(--driftY) * 0.32px), 0);
         }
-        57% {
+        50% {
           transform: translate3d(-50%, -50%, 0)
-            translate3d(calc(var(--driftX) * 0.34px), calc(var(--driftY) * 0.74px), 0);
+            translate3d(calc(var(--driftX) * 0.78px), calc(var(--driftY) * 0.58px), 0);
         }
-        82% {
+        75% {
           transform: translate3d(-50%, -50%, 0)
-            translate3d(calc(var(--driftX) * 0.78px), calc(var(--driftY) * 0.56px), 0);
+            translate3d(calc(var(--driftX) * 0.42px), calc(var(--driftY) * 0.32px), 0);
         }
         100% {
           transform: translate3d(-50%, -50%, 0)
-            translate3d(calc(var(--driftX) * 0.22px), calc(var(--driftY) * 0.28px), 0);
+            translate3d(calc(var(--driftX) * 0.12px), calc(var(--driftY) * 0.14px), 0);
         }
       }
 
       @keyframes sway {
-        0%,
-        100% {
-          transform: rotate(-0.85deg) scale(1);
+        0% {
+          transform: rotate(-1.05deg) scale(1);
+        }
+        25% {
+          transform: rotate(-0.2deg) scale(1.005);
         }
         50% {
-          transform: rotate(1.15deg) scale(1.01);
+          transform: rotate(1.1deg) scale(1.012);
+        }
+        75% {
+          transform: rotate(0.2deg) scale(1.005);
+        }
+        100% {
+          transform: rotate(-1.05deg) scale(1);
         }
       }
 
@@ -454,6 +656,48 @@
         }
       }
 
+      @keyframes bgFloat {
+        0% {
+          transform: translate3d(-50%, -50%, 0)
+            translate3d(calc(var(--driftX, 0) * 0.1px), calc(var(--driftY, 0) * 0.12px), 0);
+        }
+        50% {
+          transform: translate3d(-50%, -50%, 0)
+            translate3d(calc(var(--driftX, 0) * 0.6px), calc(var(--driftY, 0) * 0.5px), 0);
+        }
+        100% {
+          transform: translate3d(-50%, -50%, 0)
+            translate3d(calc(var(--driftX, 0) * 0.1px), calc(var(--driftY, 0) * 0.12px), 0);
+        }
+      }
+
+      @keyframes transitionPetals {
+        0% {
+          transform: translateY(40px) scale(1);
+        }
+        50% {
+          transform: translateY(-20px) scale(1.05);
+        }
+        100% {
+          transform: translateY(-80px) scale(1.08);
+        }
+      }
+
+      @keyframes reactionPulse {
+        0% {
+          opacity: 0.85;
+          transform: translate(-50%, -50%) scale(0.35);
+        }
+        60% {
+          opacity: 0.45;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.3);
+        }
+      }
+
       @keyframes chipShine {
         0%,
         58% {
@@ -466,6 +710,24 @@
         100% {
           transform: translateX(65%) rotate(8deg);
           opacity: 0.18;
+        }
+      }
+
+      @keyframes petalFall {
+        0% {
+          transform: translate3d(var(--driftX, 0), -5vh, 0) rotate(var(--startTilt, -12deg));
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.8;
+        }
+        50% {
+          transform: translate3d(calc(var(--driftX, 0) + 6vw), 50vh, 0) rotate(6deg);
+          opacity: 0.85;
+        }
+        100% {
+          transform: translate3d(calc(var(--driftX, 0) - 3vw), 105vh, 0) rotate(-18deg);
+          opacity: 0;
         }
       }
 
@@ -544,9 +806,15 @@
       <div class="controls">
         <button class="chip" id="musicToggle" type="button">Música: OFF</button>
         <button class="chip" id="resetBtn" type="button">Reiniciar</button>
+        <button class="chip chip--timer" id="loveTimer" type="button" aria-live="polite" aria-label="Tiempo juntos">
+          Juntos: —
+        </button>
+        <a class="chip" id="memoriesLink" href="recuerditos.html">Recuerditos</a>
       </div>
 
+      <div id="backgroundGarden" aria-hidden="true"></div>
       <div id="garden" aria-hidden="false"></div>
+      <div id="petalRain" aria-hidden="true"></div>
 
       <div class="letterShell" aria-live="polite" aria-atomic="true">
         <section class="letter" role="dialog" aria-label="Carta romántica">
@@ -563,13 +831,20 @@
       <div class="hint" id="hint">Toca una flor amarilla 🌻</div>
     </main>
 
+    <div id="pageTransition" aria-hidden="true"></div>
+
     <script>
       (() => {
+        const backgroundGarden = document.querySelector("#backgroundGarden");
         const garden = document.querySelector("#garden");
+        const petalRain = document.querySelector("#petalRain");
         const hint = document.querySelector("#hint");
         const letterTextEl = document.querySelector("#letterText");
         const resetBtn = document.querySelector("#resetBtn");
         const musicToggle = document.querySelector("#musicToggle");
+        const loveTimer = document.querySelector("#loveTimer");
+        const memoriesLink = document.querySelector("#memoriesLink");
+        const pageTransition = document.querySelector("#pageTransition");
 
         const romanticText =
           "Holaa amorcitoo apesar de que no pude darte tus flores amarillas en persona debido a la convi y eso me puse a hacer esta pagina web en 1 hora por eso no te respondía muxo, dejame decirte lo mucho que te amo haciendote este gesto.. 🌻💗\n" +
@@ -577,8 +852,28 @@
           "gracias por los días más hermosos y bonitos al ladito tuyoo, gracias por todo en general pero igual muxisisimas gracias por ser mi noviaa toda hermosaaa y todaa preciosaaa 🌻💗\n" +
           "Te amooo un montónnnnn mi amoorcitoooo 💗🌻";
 
+        const whisperPhrases = [
+          "te amo mi sol",
+          "eres mi personita favorita",
+          "mi niña hermosa",
+          "gracias por quedarte conmigo",
+          "eres mi hogar bonito",
+          "siempre contigo amor",
+          "mi corazón es tuyo",
+          "te adoro bb",
+        ];
+
+        const loveStartDate = new Date(2026, 1, 19, 0, 0, 0);
+        const loveTimerModes = ["days", "hours", "clock"];
+
         let revealed = false;
         let typingTimer = null;
+        let petalInterval = null;
+        let petalStopTimer = null;
+        let lastWhisperTs = 0;
+        let loveTimerMode = 0;
+        let loveTimerInterval = null;
+        let loveTimerInitialized = false;
 
         // --- Flowers ---
         const rand = (min, max) => Math.random() * (max - min) + min;
@@ -626,13 +921,66 @@
           return wrap;
         }
 
+        function createBackgroundFlower({ x, y, size }) {
+          const wrap = document.createElement("div");
+          wrap.className = "backgroundFlowerWrap";
+          wrap.style.setProperty("--x", String(x));
+          wrap.style.setProperty("--y", String(y));
+          wrap.style.setProperty("--floatDur", `${rand(24, 42).toFixed(2)}s`);
+          wrap.style.setProperty("--driftX", `${rand(-10, 10).toFixed(2)}`);
+          wrap.style.setProperty("--driftY", `${rand(-8, 8).toFixed(2)}`);
+
+          const bloom = document.createElement("div");
+          bloom.className = "backgroundFlower";
+          bloom.style.setProperty("--size", `${size}px`);
+          bloom.style.setProperty("--tilt", `${rand(-30, 30).toFixed(2)}deg`);
+
+          const head = document.createElement("div");
+          head.className = "head";
+          const spark = document.createElement("div");
+          spark.className = "spark";
+          head.appendChild(spark);
+
+          const petals = 12;
+          for (let p = 0; p < petals; p++) {
+            const petal = document.createElement("div");
+            petal.className = "petal";
+            petal.style.setProperty("--i", String(p * (360 / petals)));
+            head.appendChild(petal);
+          }
+
+          const center = document.createElement("div");
+          center.className = "center";
+          head.appendChild(center);
+
+          bloom.appendChild(head);
+          wrap.appendChild(bloom);
+          return wrap;
+        }
+
+        function seedBackgroundFlowers() {
+          if (!backgroundGarden) return;
+          backgroundGarden.innerHTML = "";
+          const amount = window.matchMedia("(max-width: 520px)").matches ? 16 : 24;
+          for (let i = 0; i < amount; i++) {
+            const flower = createBackgroundFlower({
+              x: rand(2, 98),
+              y: rand(4, 96),
+              size: rand(46, 88),
+            });
+            backgroundGarden.appendChild(flower);
+          }
+        }
+
         function seedGarden() {
+          seedBackgroundFlowers();
           garden.innerHTML = "";
           revealed = false;
           document.body.classList.remove("is-revealing");
           hint.textContent = "Toca una flor amarilla 🌻";
           hint.style.opacity = "";
           stopTyping();
+          stopPetalRain();
           letterTextEl.textContent = "";
 
           const amount = window.matchMedia("(max-width: 520px)").matches ? 10 : 14;
@@ -653,6 +1001,10 @@
           for (const p of placements) {
             const flowerEl = createFlower(p);
             flowerEl.addEventListener("click", () => reveal());
+            const flowerBtn = flowerEl.querySelector(".flower");
+            if (flowerBtn) {
+              flowerBtn.addEventListener("click", () => triggerFlowerReaction(flowerBtn));
+            }
             garden.appendChild(flowerEl);
           }
         }
@@ -665,6 +1017,7 @@
           document.body.classList.add("is-revealing");
           hint.textContent = "";
           startTyping(romanticText);
+          startPetalRain();
         }
 
         function stopTyping() {
@@ -702,6 +1055,114 @@
           };
 
           typingTimer = setTimeout(tick, 300);
+        }
+
+        // --- Petal rain ---
+        function spawnPetal() {
+          if (!petalRain) return;
+          const petal = document.createElement("span");
+          petal.className = "petalRain__petal";
+          const size = rand(16, 28);
+          petal.style.setProperty("--petalSize", `${size}px`);
+          petal.style.setProperty("--petalDur", `${rand(8.5, 13.5).toFixed(2)}s`);
+          petal.style.setProperty("--startTilt", `${rand(-18, 18).toFixed(2)}deg`);
+          petal.style.setProperty("--driftX", `${rand(-4, 4).toFixed(2)}vw`);
+          petal.style.left = `${rand(2, 98)}%`;
+          petal.style.animationDelay = `${rand(0, 1.4).toFixed(2)}s`;
+          petal.style.opacity = `${rand(0.55, 0.85).toFixed(2)}`;
+          petalRain.appendChild(petal);
+          petal.addEventListener("animationend", () => petal.remove());
+        }
+
+        function startPetalRain() {
+          if (!petalRain) return;
+          stopPetalRain();
+          petalRain.classList.add("is-active");
+          for (let i = 0; i < 14; i++) {
+            setTimeout(spawnPetal, i * 160);
+          }
+          petalInterval = setInterval(() => {
+            spawnPetal();
+          }, 420);
+          petalStopTimer = setTimeout(() => {
+            stopPetalRain();
+          }, 20000);
+        }
+
+        function stopPetalRain() {
+          if (!petalRain) return;
+          if (petalInterval) {
+            clearInterval(petalInterval);
+            petalInterval = null;
+          }
+          if (petalStopTimer) {
+            clearTimeout(petalStopTimer);
+            petalStopTimer = null;
+          }
+          petalRain.classList.remove("is-active");
+          petalRain.innerHTML = "";
+        }
+
+        // --- Flower reactions ---
+        function triggerFlowerReaction(target) {
+          if (!target) return;
+          target.classList.add("is-reacting");
+          const burst = document.createElement("span");
+          burst.className = "flowerReaction";
+          target.appendChild(burst);
+          burst.addEventListener("animationend", () => burst.remove());
+          setTimeout(() => target.classList.remove("is-reacting"), 900);
+          speakWhisper();
+        }
+
+        function speakWhisper() {
+          const synth = window.speechSynthesis;
+          if (!synth || typeof SpeechSynthesisUtterance === "undefined") return;
+          const now = Date.now();
+          if (synth.speaking || now - lastWhisperTs < 1400) return;
+          lastWhisperTs = now;
+          const utterance = new SpeechSynthesisUtterance(pick(whisperPhrases));
+          utterance.lang = "es-ES";
+          utterance.rate = 0.88;
+          utterance.pitch = 1.1;
+          utterance.volume = 0.6;
+          synth.speak(utterance);
+        }
+
+        // --- Love timer ---
+        function initLoveTimer() {
+          if (!loveTimer || loveTimerInitialized) return;
+          loveTimerInitialized = true;
+          loveTimer.addEventListener("click", () => {
+            loveTimerMode = (loveTimerMode + 1) % loveTimerModes.length;
+            updateLoveTimer();
+          });
+          updateLoveTimer();
+          loveTimerInterval = setInterval(updateLoveTimer, 1000);
+        }
+
+        function updateLoveTimer() {
+          if (!loveTimer) return;
+          const now = new Date();
+          let diff = now - loveStartDate;
+          if (diff < 0) diff = 0;
+          const totalSeconds = Math.floor(diff / 1000);
+          const totalMinutes = Math.floor(totalSeconds / 60);
+          const totalHours = Math.floor(totalMinutes / 60);
+          const days = Math.floor(totalHours / 24);
+          const hours = totalHours % 24;
+          const minutes = totalMinutes % 60;
+          const seconds = totalSeconds % 60;
+          const pad = (n) => String(n).padStart(2, "0");
+          const modeKey = loveTimerModes[loveTimerMode] ?? loveTimerModes[0];
+
+          const displayMap = {
+            days: `Juntos: ${days} días`,
+            hours: `Horas de amor: ${totalHours.toLocaleString("es-ES")}`,
+            clock: `${pad(days)}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+          };
+
+          loveTimer.textContent = displayMap[modeKey];
         }
 
         // --- Music (simple romantic arpeggio via WebAudio) ---
@@ -790,6 +1251,18 @@
           if (musicOn) stopMusic();
           else startMusic();
         });
+        if (memoriesLink) {
+          memoriesLink.addEventListener("click", (event) => {
+            if (!pageTransition) return;
+            event.preventDefault();
+            const target = memoriesLink.getAttribute("href");
+            document.body.classList.add("is-transitioning");
+            pageTransition.setAttribute("aria-hidden", "false");
+            setTimeout(() => {
+              window.location.href = target ?? "recuerditos.html";
+            }, 620);
+          });
+        }
 
         window.addEventListener("resize", () => {
           // Keep it simple: reseed positions on orientation changes.
@@ -797,6 +1270,7 @@
         });
 
         // Start
+        initLoveTimer();
         seedGarden();
       })();
     </script>
