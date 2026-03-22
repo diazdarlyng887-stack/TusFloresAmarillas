@@ -174,7 +174,7 @@
 
       .gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: clamp(1rem, 3vw, 1.8rem);
         margin: clamp(1rem, 3.5vw, 2.2rem) auto;
         max-width: 1100px;
@@ -330,6 +330,36 @@
         }
         100% {
           transform: translateY(-80px) scale(1.08);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .scene {
+          padding-top: 4.5rem;
+          padding-bottom: 7rem;
+        }
+        .controls {
+          justify-content: center;
+        }
+        .chip {
+          flex: 1 1 150px;
+          text-align: center;
+          box-shadow:
+            0 12px 30px rgba(80, 45, 0, 0.1),
+            0 0 0.6rem rgba(255, 200, 60, 0.16),
+            0 1px 0 rgba(255, 255, 255, 0.32) inset;
+        }
+        .hero {
+          margin-top: 0.2rem;
+        }
+        .polaroid {
+          animation: none;
+          box-shadow:
+            0 30px 60px rgba(80, 45, 0, 0.13),
+            0 3px 0 rgba(255, 255, 255, 0.5) inset;
+        }
+        .backgroundFlowerWrap {
+          opacity: 0.3;
         }
       }
 
